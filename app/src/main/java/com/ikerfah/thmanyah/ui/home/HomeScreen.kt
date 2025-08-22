@@ -59,7 +59,7 @@ fun HomeScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.refresh()
+        viewModel.performAction(AppIntent.LoadData)
     }
     HomeContent(state = state)
 }
@@ -80,22 +80,21 @@ private fun HomeContent(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.primary
     ) { padding ->
-        when (state) {
-            is HomeUiState.Loading ->
-                Box(
-                    Modifier
-                        .fillMaxSize()
-                        .padding(padding)
-                ) { CircularProgressIndicator() }
-
-            // TODO Improve this Error screen
-            is HomeUiState.Error -> Box(
+        if (state.isLoading) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) { CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary) }
+        } else if (state.throwable != null) {
+            Box(
                 Modifier
                     .fillMaxSize()
                     .padding(padding)
             ) { Text("Error: ${state.throwable.message}") }
-
-            is HomeUiState.Success -> SectionsList(
+        } else {
+            SectionsList(
                 sections = state.sections,
                 modifier = Modifier.padding(padding)
             )
@@ -224,12 +223,13 @@ private fun SectionHeader(
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 private fun HomeContentSuccessPreview() {
     ThmanyahTheme {
         HomeContent(
-            state = HomeUiState.Success(
+            state = HomeUiState(
                 sections = listOf(
                     Section(
                         name = "Section 1",
