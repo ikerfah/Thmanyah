@@ -1,0 +1,289 @@
+package com.ikerfah.thmanyah.ui.home
+
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ikerfah.thmanyah.domain.model.Section
+import com.ikerfah.thmanyah.domain.model.SectionContent
+import com.ikerfah.thmanyah.domain.model.SectionType
+import com.ikerfah.thmanyah.ui.components.GridItem
+import com.ikerfah.thmanyah.ui.components.GridItemSizes
+import com.ikerfah.thmanyah.ui.components.Queue
+import com.ikerfah.thmanyah.ui.components.Square
+import com.ikerfah.thmanyah.ui.components.SquareBig
+import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
+import com.ikerfah.thmanyah.ui.theme.sectionHeader
+import org.koin.androidx.compose.koinViewModel
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    viewModel: HomeViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.refresh()
+    }
+    HomeContent(state = state)
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun HomeContent(
+    state: HomeUiState,
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Thmanyah") },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
+            )
+        },
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.primary
+    ) { padding ->
+        when (state) {
+            is HomeUiState.Loading ->
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(padding)
+                ) { CircularProgressIndicator() }
+
+            // TODO Improve this Error screen
+            is HomeUiState.Error -> Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) { Text("Error: ${state.throwable.message}") }
+
+            is HomeUiState.Success -> SectionsList(
+                sections = state.sections,
+                modifier = Modifier.padding(padding)
+            )
+        }
+    }
+}
+
+@Composable
+private fun SectionsList(
+    sections: List<Section>,
+    modifier: Modifier = Modifier
+) {
+    val screenWidth =
+        with(LocalDensity.current) { LocalWindowInfo.current.containerSize.width.toDp() }
+    val itemWidth = screenWidth * 0.7f
+    LazyColumn(modifier.fillMaxSize()) {
+        sections.forEach { section ->
+            item {
+                SectionHeader(name = section.name)
+            }
+            when (section.type) {
+                SectionType.Square -> {
+                    item {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            contentPadding = PaddingValues(horizontal = 16.dp)
+                        ) {
+                            items(section.items) { sectionContent ->
+                                Square(
+                                    imageUrl = sectionContent.imageUrl,
+                                    title = sectionContent.title
+                                )
+                            }
+                        }
+                    }
+                }
+
+                SectionType.BigSquare -> item {
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(horizontal = 16.dp)
+                    ) {
+                        items(section.items) { sectionContent ->
+                            SquareBig(
+                                imageUrl = sectionContent.imageUrl,
+                                title = sectionContent.title
+                            )
+                        }
+                    }
+                }
+
+                SectionType.TwoLinesGrid -> {
+                    item {
+                        LazyHorizontalGrid(
+                            rows = GridCells.Fixed(2),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            contentPadding = PaddingValues(horizontal = 16.dp),
+                            // LazyHorizontalGrid's height should be bound by parent.
+                            // We have two rows, each has max height of GridItemSizes.maxHeight
+                            // Total height will be the sum height of the two + some paddings
+                            modifier = Modifier.heightIn(max = GridItemSizes.maxHeight.times(2))
+                        ) {
+                            items(section.items) { sectionContent ->
+                                GridItem(
+                                    imageUrl = sectionContent.imageUrl,
+                                    title = sectionContent.title,
+                                    modifier = Modifier.width(itemWidth)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                SectionType.Queue -> {
+
+                    val itemsToShow = if (section.items.isNotEmpty()) {
+                        // We only show the first 4 items of the queue
+                        section.items.take(4)
+                    } else {
+                        emptyList()
+                    }
+                    item {
+                        Queue(
+                            imagesUrl = itemsToShow.map { it.imageUrl },
+                            title = itemsToShow.lastOrNull()?.title
+                        )
+                    }
+                }
+            }
+
+
+        }
+        item { Spacer(Modifier.height(8.dp)) }
+    }
+}
+
+@Composable
+private fun SectionHeader(
+    name: String,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(
+                start = 16.dp,
+                top = 16.dp,
+                bottom = 16.dp,
+            ),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = name,
+            style = MaterialTheme.typography.sectionHeader,
+            color = MaterialTheme.colorScheme.onPrimary
+        )
+        Spacer(Modifier.weight(1f))
+        IconButton(onClick = {}) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onPrimary
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun HomeContentSuccessPreview() {
+    ThmanyahTheme {
+        HomeContent(
+            state = HomeUiState.Success(
+                sections = listOf(
+                    Section(
+                        name = "Section 1",
+                        type = SectionType.Square,
+                        order = 1,
+                        items = listOf(
+                            SectionContent(
+                                id = "id1",
+                                title = "Content 1",
+                                imageUrl = null
+                            ),
+                            SectionContent(
+                                id = "id2",
+                                title = "Content 2",
+                                imageUrl = null
+                            )
+                        )
+                    ),
+                    Section(
+                        name = "Section 1",
+                        type = SectionType.BigSquare,
+                        order = 1,
+                        items = listOf(
+                            SectionContent(
+                                id = "id1",
+                                title = "Content 1",
+                                imageUrl = null
+                            ),
+                            SectionContent(
+                                id = "id2",
+                                title = "Content 2",
+                                imageUrl = null
+                            )
+                        )
+                    ),
+                    Section(
+                        name = "Section 1",
+                        type = SectionType.Queue,
+                        order = 1,
+                        items = listOf(
+                            SectionContent(
+                                id = "id1",
+                                title = "Content 1",
+                                imageUrl = null
+                            ),
+                            SectionContent(
+                                id = "id2",
+                                title = "Content 2",
+                                imageUrl = null
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    }
+}
