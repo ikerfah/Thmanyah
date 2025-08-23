@@ -8,6 +8,7 @@ import com.ikerfah.thmanyah.domain.repository.AppRepository
 import com.ikerfah.thmanyah.domain.usecase.GetHomeSectionsUseCase
 import com.ikerfah.thmanyah.domain.usecase.SearchUseCase
 import com.ikerfah.thmanyah.ui.home.HomeViewModel
+import com.ikerfah.thmanyah.ui.home.SearchViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
@@ -16,6 +17,7 @@ val appModule = module {
     factory { GetHomeSectionsUseCase(get()) }
     factory { SearchUseCase(get()) }
     viewModel { HomeViewModel(get()) }
+    viewModel { SearchViewModel(get()) }
 }
 
 val networkModule = module {

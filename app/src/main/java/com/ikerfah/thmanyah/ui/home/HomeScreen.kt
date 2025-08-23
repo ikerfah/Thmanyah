@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -21,9 +20,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material3.Badge
-import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -33,8 +29,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,11 +37,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ikerfah.thmanyah.R
 import com.ikerfah.thmanyah.domain.model.ContentType
 import com.ikerfah.thmanyah.domain.model.Section
 import com.ikerfah.thmanyah.domain.model.SectionContent
@@ -58,7 +50,6 @@ import com.ikerfah.thmanyah.ui.components.Queue
 import com.ikerfah.thmanyah.ui.components.Square
 import com.ikerfah.thmanyah.ui.components.SquareBig
 import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
-import com.ikerfah.thmanyah.ui.theme.appBarText
 import com.ikerfah.thmanyah.ui.theme.highlightedBackground
 import com.ikerfah.thmanyah.ui.theme.sectionHeader
 import org.koin.androidx.compose.koinViewModel
@@ -68,16 +59,22 @@ import java.time.LocalDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel = koinViewModel()
+    homeViewModel: HomeViewModel = koinViewModel(),
+    searchViewModel: SearchViewModel = koinViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by homeViewModel.state.collectAsStateWithLifecycle()
+    val searchState by searchViewModel.query
+    val searchResults by searchViewModel.results.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.performAction(AppIntent.LoadData)
+        homeViewModel.performAction(AppIntent.LoadData)
     }
     HomeContent(
         state = state,
-        onSelectedContentTypeChange = { viewModel.performAction(AppIntent.SelectContentType(it)) }
+        onSelectedContentTypeChange = { homeViewModel.performAction(AppIntent.SelectContentType(it)) },
+        searchQuery = searchState,
+        onSearchQueryChange = searchViewModel::onQueryChange,
+        searchResults = searchResults,
     )
 }
 
@@ -86,10 +83,19 @@ fun HomeScreen(
 private fun HomeContent(
     state: HomeUiState,
     onSelectedContentTypeChange: (ContentType) -> Unit,
+    searchQuery: String,
+    onSearchQueryChange: (String) -> Unit,
+    searchResults: List<Section>,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        topBar = { TopAppBar() },
+        topBar = {
+            AppBarWithSearch(
+                query = searchQuery,
+                onQueryChange = onSearchQueryChange,
+                searchResults = searchResults,
+            )
+        },
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.primary
     ) { padding ->
@@ -119,7 +125,7 @@ private fun HomeContent(
 }
 
 @Composable
-private fun SectionsList(
+internal fun SectionsList(
     sections: List<Section>,
     contentTypes: List<ContentType>,
     selectedContentType: ContentType?,
@@ -291,48 +297,6 @@ private fun CategoryItem(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun TopAppBar(modifier: Modifier = Modifier) {
-    TopAppBar(
-        modifier = modifier,
-        title = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.profile_circle),
-                    contentDescription = null,
-                    tint = Color.Unspecified,
-                    modifier = Modifier.size(48.dp)
-                )
-                Text(
-                    text = "Good afternoon, Abdurahman",
-                    style = MaterialTheme.typography.appBarText
-
-                )
-            }
-        },
-        actions = {
-            BadgedBox(
-                badge = {
-                    Badge {
-                        Text("4")
-                    }
-                },
-                modifier = Modifier.padding(horizontal = 8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Notifications,
-                    contentDescription = "Notifications"
-                )
-            }
-        },
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
-    )
-}
-
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
@@ -413,6 +377,9 @@ private fun HomeContentSuccessPreview() {
                 selectedContentType = ContentType.Podcast
             ),
             onSelectedContentTypeChange = {},
+            searchQuery = "",
+            onSearchQueryChange = {},
+            searchResults = listOf(),
         )
     }
 }
