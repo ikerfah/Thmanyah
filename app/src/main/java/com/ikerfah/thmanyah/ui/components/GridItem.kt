@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 fun GridItem(
     imageUrl: String?,
     title: String,
-    durationInSeconds: Int,
+    durationInSeconds: Int?,
     releaseDate: LocalDateTime?,
     modifier: Modifier = Modifier
 ) {
@@ -62,7 +62,9 @@ fun GridItem(
                 modifier = Modifier.padding(8.dp),
                 color = MaterialTheme.colorScheme.onPrimary,
             )
-            Duration(durationInSeconds, modifier = Modifier.padding(start = 16.dp))
+            durationInSeconds?.let {
+                Duration(it, modifier = Modifier.padding(start = 16.dp))
+            }
         }
     }
 }

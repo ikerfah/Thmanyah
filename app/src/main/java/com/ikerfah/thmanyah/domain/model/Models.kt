@@ -15,7 +15,7 @@ data class SectionContent(
     val title: String,
     val imageUrl: String?,
     val priority: Int,
-    val durationInSeconds: Int,
+    val durationInSeconds: Int?,
     val releaseDate: LocalDateTime? = null
 )
 

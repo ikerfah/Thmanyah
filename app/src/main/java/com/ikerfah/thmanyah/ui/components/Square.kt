@@ -17,7 +17,7 @@ import java.time.LocalDateTime
 fun Square(
     imageUrl: String?,
     title: String,
-    durationInSeconds: Int,
+    durationInSeconds: Int?,
     releaseDate: LocalDateTime?,
     modifier: Modifier = Modifier
 ) {
@@ -29,7 +29,7 @@ fun Square(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Duration(durationInSeconds, modifier = Modifier.padding(start = 8.dp))
+            durationInSeconds?.let { Duration(it, modifier = Modifier.padding(start = 8.dp)) }
             releaseDate?.let {
                 Date(it)
             }
