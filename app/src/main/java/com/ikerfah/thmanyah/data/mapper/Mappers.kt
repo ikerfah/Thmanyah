@@ -1,5 +1,6 @@
 package com.ikerfah.thmanyah.data.mapper
 
+import com.ikerfah.thmanyah.data.remote.dto.SearchSectionDto
 import com.ikerfah.thmanyah.data.remote.dto.SectionDto
 import com.ikerfah.thmanyah.domain.model.ContentType
 import com.ikerfah.thmanyah.domain.model.Section
@@ -47,6 +48,25 @@ fun SectionDto.toDomain(): Section {
                 priority = it.priority ?: it.podcastPriority ?: Int.MAX_VALUE,
                 durationInSeconds = it.duration,
                 releaseDate = it.releaseDate?.let { parseUtcDateToLocalDateTime(it) },
+            )
+        }
+    )
+}
+
+fun SearchSectionDto.toDomain(): Section {
+    val contentType = toContentType(contentType)
+    return Section(
+        name = name,
+        contentType = contentType,
+        type = toSectionType(type),
+        order = order?.toIntOrNull() ?: Int.MAX_VALUE,
+        items = content.mapNotNull {
+            SectionContent(
+                id = it.podcastId ?: return@mapNotNull null,
+                title = it.name,
+                imageUrl = it.avatarUrl,
+                priority = it.priority?.toIntOrNull() ?: Int.MAX_VALUE,
+                durationInSeconds = it.duration?.toIntOrNull(),
             )
         }
     )
