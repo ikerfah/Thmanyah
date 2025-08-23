@@ -22,11 +22,9 @@ class HomeViewModel(
         viewModelScope.launch {
             _state.update { it.copy(isLoading = true) }
             try {
-                _state.update { it.copy(_sections = getHomeSectionsUseCase(page = 1)) } // TODO: Do something about the pagination
+                _state.update { it.copy(_sections = getHomeSectionsUseCase(page = 1), isLoading = false) } // TODO: Do something about the pagination
             } catch (e: Exception) {
-                _state.update { it.copy(throwable = e) }
-            } finally {
-                _state.update { it.copy(isLoading = false) }
+                _state.update { it.copy(throwable = e, isLoading = false) }
             }
         }
     }

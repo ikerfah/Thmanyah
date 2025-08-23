@@ -87,4 +87,9 @@ dependencies {
 
     // Icons
     implementation(libs.androidx.material.icons.extended)
+
+    // Tests
+    testImplementation(libs.turbine)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
 }
