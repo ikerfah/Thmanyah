@@ -75,6 +75,9 @@ fun HomeScreen(
         searchQuery = searchState,
         onSearchQueryChange = searchViewModel::onQueryChange,
         searchResults = searchResults,
+        loadMoreItems = {
+            homeViewModel.performAction(AppIntent.LoadMoreItems)
+        }
     )
 }
 
@@ -86,6 +89,7 @@ private fun HomeContent(
     searchQuery: String,
     onSearchQueryChange: (String) -> Unit,
     searchResults: List<Section>,
+    loadMoreItems: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -118,6 +122,7 @@ private fun HomeContent(
                 contentTypes = state.contentTypes,
                 selectedContentType = state.selectedContentType,
                 onSelectedContentTypeChange = onSelectedContentTypeChange,
+                loadMoreItems = loadMoreItems,
                 modifier = Modifier.padding(padding)
             )
         }
@@ -130,6 +135,7 @@ internal fun SectionsList(
     contentTypes: List<ContentType>,
     selectedContentType: ContentType?,
     onSelectedContentTypeChange: (ContentType) -> Unit,
+    loadMoreItems: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val screenWidth =
@@ -233,7 +239,10 @@ internal fun SectionsList(
 
 
         }
-        item { Spacer(Modifier.height(8.dp)) }
+        item {
+            Spacer(modifier = Modifier.height(16.dp))
+            loadMoreItems()
+        }
     }
 }
 
@@ -379,6 +388,7 @@ private fun HomeContentSuccessPreview() {
             onSelectedContentTypeChange = {},
             searchQuery = "",
             onSearchQueryChange = {},
+            loadMoreItems = {},
             searchResults = listOf(),
         )
     }

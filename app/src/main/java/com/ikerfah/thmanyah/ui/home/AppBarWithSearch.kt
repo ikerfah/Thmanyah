@@ -118,7 +118,8 @@ fun CustomizableSearchBar(
                 sections = searchResults,
                 contentTypes = emptyList(),
                 selectedContentType = null,
-                onSelectedContentTypeChange = {}
+                onSelectedContentTypeChange = {},
+                loadMoreItems = {},
             )
         }
     }
