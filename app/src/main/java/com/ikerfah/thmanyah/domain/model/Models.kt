@@ -2,6 +2,7 @@ package com.ikerfah.thmanyah.domain.model
 
 data class Section(
     val name: String,
+    val contentType: ContentType,
     val type: SectionType,
     val order: Int,
     val items: List<SectionContent>

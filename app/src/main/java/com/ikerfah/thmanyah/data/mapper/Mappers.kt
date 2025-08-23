@@ -27,6 +27,7 @@ fun SectionDto.toDomain(): Section {
     val contentType = toContentType(contentType)
     return Section(
         name = name,
+        contentType = contentType,
         type = toSectionType(type),
         order = order ?: Int.MAX_VALUE, // if order is not defined, make it last
         items = content.mapNotNull {

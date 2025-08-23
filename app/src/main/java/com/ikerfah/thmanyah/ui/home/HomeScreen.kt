@@ -1,5 +1,6 @@
 package com.ikerfah.thmanyah.ui.home
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,11 +36,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ikerfah.thmanyah.domain.model.ContentType
 import com.ikerfah.thmanyah.domain.model.Section
 import com.ikerfah.thmanyah.domain.model.SectionContent
 import com.ikerfah.thmanyah.domain.model.SectionType
@@ -47,6 +52,7 @@ import com.ikerfah.thmanyah.ui.components.Queue
 import com.ikerfah.thmanyah.ui.components.Square
 import com.ikerfah.thmanyah.ui.components.SquareBig
 import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
+import com.ikerfah.thmanyah.ui.theme.highlightedBackground
 import com.ikerfah.thmanyah.ui.theme.sectionHeader
 import org.koin.androidx.compose.koinViewModel
 
@@ -61,13 +67,17 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.performAction(AppIntent.LoadData)
     }
-    HomeContent(state = state)
+    HomeContent(
+        state = state,
+        onSelectedContentTypeChange = { viewModel.performAction(AppIntent.SelectContentType(it)) }
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun HomeContent(
     state: HomeUiState,
+    onSelectedContentTypeChange: (ContentType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -96,6 +106,9 @@ private fun HomeContent(
         } else {
             SectionsList(
                 sections = state.sections,
+                contentTypes = state.contentTypes,
+                selectedContentType = state.selectedContentType,
+                onSelectedContentTypeChange = onSelectedContentTypeChange,
                 modifier = Modifier.padding(padding)
             )
         }
@@ -105,12 +118,31 @@ private fun HomeContent(
 @Composable
 private fun SectionsList(
     sections: List<Section>,
+    contentTypes: List<ContentType>,
+    selectedContentType: ContentType?,
+    onSelectedContentTypeChange: (ContentType) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val screenWidth =
         with(LocalDensity.current) { LocalWindowInfo.current.containerSize.width.toDp() }
     val itemWidth = screenWidth * 0.7f
     LazyColumn(modifier.fillMaxSize()) {
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = PaddingValues(horizontal = 16.dp)
+            ) {
+                items(contentTypes) { contentType ->
+                    CategoryItem(
+                        name = contentType.name,
+                        isSelected = selectedContentType == contentType,
+                        onClick = {
+                            onSelectedContentTypeChange(contentType)
+                        }
+                    )
+                }
+            }
+        }
         sections.forEach { section ->
             item {
                 SectionHeader(name = section.name)
@@ -223,6 +255,35 @@ private fun SectionHeader(
     }
 }
 
+@Composable
+private fun CategoryItem(
+    name: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    FilterChip(
+        onClick = onClick,
+        label = {
+            Text(name)
+        },
+        selected = isSelected,
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = if (isSelected) {
+                MaterialTheme.colorScheme.highlightedBackground
+            } else {
+                MaterialTheme.colorScheme.surface
+            },
+            selectedLabelColor = if (isSelected) {
+                Color.White
+            } else {
+                MaterialTheme.colorScheme.surface
+            }
+        ),
+        modifier = modifier
+    )
+}
+
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
@@ -230,11 +291,12 @@ private fun HomeContentSuccessPreview() {
     ThmanyahTheme {
         HomeContent(
             state = HomeUiState(
-                sections = listOf(
+                _sections = listOf(
                     Section(
                         name = "Section 1",
                         type = SectionType.Square,
                         order = 1,
+                        contentType = ContentType.Podcast,
                         items = listOf(
                             SectionContent(
                                 id = "id1",
@@ -251,7 +313,8 @@ private fun HomeContentSuccessPreview() {
                     Section(
                         name = "Section 1",
                         type = SectionType.BigSquare,
-                        order = 1,
+                        order = 2,
+                        contentType = ContentType.Podcast,
                         items = listOf(
                             SectionContent(
                                 id = "id1",
@@ -268,7 +331,8 @@ private fun HomeContentSuccessPreview() {
                     Section(
                         name = "Section 1",
                         type = SectionType.Queue,
-                        order = 1,
+                        order = 3,
+                        contentType = ContentType.AudioBook,
                         items = listOf(
                             SectionContent(
                                 id = "id1",
@@ -282,8 +346,10 @@ private fun HomeContentSuccessPreview() {
                             )
                         )
                     )
-                )
-            )
+                ),
+                selectedContentType = ContentType.Podcast
+            ),
+            onSelectedContentTypeChange = {},
         )
     }
 }
