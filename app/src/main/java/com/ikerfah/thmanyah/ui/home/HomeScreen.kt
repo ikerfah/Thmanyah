@@ -3,6 +3,7 @@ package com.ikerfah.thmanyah.ui.home
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -158,13 +159,11 @@ internal fun SectionsList(
                 }
             }
         }
-        sections.forEach { section ->
-            item {
+        items(sections) { section ->
+            Column(modifier = Modifier.fillMaxWidth()) {
                 SectionHeader(name = section.name)
-            }
-            when (section.type) {
-                SectionType.Square -> {
-                    item {
+                when (section.type) {
+                    SectionType.Square -> {
                         LazyRow(
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
                             contentPadding = PaddingValues(horizontal = 16.dp)
@@ -179,24 +178,21 @@ internal fun SectionsList(
                             }
                         }
                     }
-                }
 
-                SectionType.BigSquare -> item {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(horizontal = 16.dp)
-                    ) {
-                        items(section.items) { sectionContent ->
-                            SquareBig(
-                                imageUrl = sectionContent.imageUrl,
-                                title = sectionContent.title
-                            )
+                    SectionType.BigSquare ->
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            contentPadding = PaddingValues(horizontal = 16.dp)
+                        ) {
+                            items(section.items) { sectionContent ->
+                                SquareBig(
+                                    imageUrl = sectionContent.imageUrl,
+                                    title = sectionContent.title
+                                )
+                            }
                         }
-                    }
-                }
 
-                SectionType.TwoLinesGrid -> {
-                    item {
+                    SectionType.TwoLinesGrid -> {
                         LazyHorizontalGrid(
                             rows = GridCells.Fixed(2),
                             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -218,17 +214,15 @@ internal fun SectionsList(
                             }
                         }
                     }
-                }
 
-                SectionType.Queue -> {
+                    SectionType.Queue -> {
 
-                    val itemsToShow = if (section.items.isNotEmpty()) {
-                        // We only show the first 4 items of the queue
-                        section.items.take(4)
-                    } else {
-                        emptyList()
-                    }
-                    item {
+                        val itemsToShow = if (section.items.isNotEmpty()) {
+                            // We only show the first 4 items of the queue
+                            section.items.take(4)
+                        } else {
+                            emptyList()
+                        }
                         Queue(
                             imagesUrl = itemsToShow.map { it.imageUrl },
                             title = itemsToShow.lastOrNull()?.title
@@ -236,8 +230,6 @@ internal fun SectionsList(
                     }
                 }
             }
-
-
         }
         item {
             Spacer(modifier = Modifier.height(16.dp))
