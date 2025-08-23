@@ -19,12 +19,14 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.ikerfah.thmanyah.R
 import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
+import java.time.LocalDateTime
 
 @Composable
 fun GridItem(
     imageUrl: String?,
     title: String,
     durationInSeconds: Int,
+    releaseDate: LocalDateTime?,
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier.height(GridItemSizes.maxHeight)) {
@@ -48,6 +50,12 @@ fun GridItem(
         }
 
         Column {
+            releaseDate?.let {
+                Date(
+                    dateTime = it,
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
             TitleText(
                 text = title,
                 maxLines = 2,
@@ -66,7 +74,8 @@ private fun GridItemPreview() {
         GridItem(
             imageUrl = "https://media.npr.org/assets/img/2018/08/03/npr_tbl_podcasttile_sq-284e5618e2b2df0f3158b076d5bc44751e78e1b6.jpg?s=1400&c=66&f=jpg",
             title = "The Very Big Listen ",
-            durationInSeconds = 320
+            durationInSeconds = 320,
+            releaseDate = LocalDateTime.now()
         )
     }
 }

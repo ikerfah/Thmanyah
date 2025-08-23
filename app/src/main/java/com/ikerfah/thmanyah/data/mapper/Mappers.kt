@@ -5,6 +5,10 @@ import com.ikerfah.thmanyah.domain.model.ContentType
 import com.ikerfah.thmanyah.domain.model.Section
 import com.ikerfah.thmanyah.domain.model.SectionContent
 import com.ikerfah.thmanyah.domain.model.SectionType
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 
 private fun toSectionType(raw: String): SectionType = when (raw.trim().lowercase()) {
@@ -41,9 +45,18 @@ fun SectionDto.toDomain(): Section {
                 title = it.name,
                 imageUrl = it.avatarUrl,
                 priority = it.priority ?: it.podcastPriority ?: Int.MAX_VALUE,
-                durationInSeconds = it.duration
+                durationInSeconds = it.duration,
+                releaseDate = it.releaseDate?.let { parseUtcDateToLocalDateTime(it) },
             )
         }
     )
+}
+
+private fun parseUtcDateToLocalDateTime(utcDateString: String): LocalDateTime? {
+    return runCatching {
+        val utcZoned = ZonedDateTime.parse(utcDateString, DateTimeFormatter.ISO_DATE_TIME)
+        val localZoned = utcZoned.withZoneSameInstant(ZoneId.systemDefault())
+        localZoned.toLocalDateTime()
+    }.getOrNull()
 }
 

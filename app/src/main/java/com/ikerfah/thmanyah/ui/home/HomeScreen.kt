@@ -55,6 +55,7 @@ import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
 import com.ikerfah.thmanyah.ui.theme.highlightedBackground
 import com.ikerfah.thmanyah.ui.theme.sectionHeader
 import org.koin.androidx.compose.koinViewModel
+import java.time.LocalDateTime
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -159,6 +160,7 @@ private fun SectionsList(
                                     imageUrl = sectionContent.imageUrl,
                                     title = sectionContent.title,
                                     durationInSeconds = sectionContent.durationInSeconds,
+                                    releaseDate = sectionContent.releaseDate,
                                 )
                             }
                         }
@@ -196,6 +198,7 @@ private fun SectionsList(
                                     imageUrl = sectionContent.imageUrl,
                                     title = sectionContent.title,
                                     durationInSeconds = sectionContent.durationInSeconds,
+                                    releaseDate = sectionContent.releaseDate,
                                     modifier = Modifier.width(itemWidth)
                                 )
                             }
@@ -305,14 +308,16 @@ private fun HomeContentSuccessPreview() {
                                 title = "Content 1",
                                 imageUrl = null,
                                 priority = 1,
-                                durationInSeconds = 300
+                                durationInSeconds = 300,
+                                releaseDate = LocalDateTime.now()
                             ),
                             SectionContent(
                                 id = "id2",
                                 title = "Content 2",
                                 imageUrl = null,
                                 priority = 2,
-                                durationInSeconds = 500
+                                durationInSeconds = 500,
+                                releaseDate = LocalDateTime.now().minusHours(3)
                             )
                         )
                     ),

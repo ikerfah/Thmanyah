@@ -46,6 +46,15 @@ val Typography.duration: TextStyle
         letterSpacing = 0.5.sp
     )
 
+val Typography.date: TextStyle
+    get() = TextStyle(
+        fontFamily = IBMPlexSansArabicFamily,
+        fontWeight = FontWeight.Light,
+        fontSize = 12.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.5.sp
+    )
+
 private val IBMPlexSansArabicFamily = FontFamily(
     Font(R.font.ibmplexsansarabic_light, FontWeight.Light),
     Font(R.font.ibmplexsansarabic_regular, FontWeight.Normal),

@@ -3,6 +3,7 @@ package com.ikerfah.thmanyah.ui.components
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,10 +29,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
 import com.ikerfah.thmanyah.R
+import com.ikerfah.thmanyah.ui.formatRelativeDateTime
 import com.ikerfah.thmanyah.ui.formatSecondsToHoursAndMinutes
 import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
+import com.ikerfah.thmanyah.ui.theme.date
 import com.ikerfah.thmanyah.ui.theme.duration
 import com.ikerfah.thmanyah.ui.theme.title
+import java.time.LocalDateTime
 
 @Composable
 fun CustomImage(
@@ -109,10 +113,40 @@ fun Duration(
     }
 }
 
+@Composable
+fun Date(
+    dateTime: LocalDateTime,
+    modifier: Modifier = Modifier
+) {
+    val formattedDate = formatRelativeDateTime(dateTime)
+    Text(
+        text = formattedDate,
+        overflow = TextOverflow.Ellipsis,
+        style = MaterialTheme.typography.date,
+        modifier = modifier
+    )
+}
+
 @Preview
 @Composable
 private fun DurationPreview() {
     ThmanyahTheme {
         Duration(durationInSeconds = 320)
+    }
+}
+
+@Preview
+@Composable
+private fun DatePreview() {
+    ThmanyahTheme {
+        Column(modifier = Modifier.background(MaterialTheme.colorScheme.primary)) {
+            val now = LocalDateTime.now()
+            Date(now)
+            Date(now.minusHours(5))
+            Date(now.minusDays(1))
+            Date(now.minusDays(2))
+            Date(now.minusWeeks(1))
+            Date(now.minusWeeks(2))
+        }
     }
 }

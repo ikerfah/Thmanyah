@@ -17,7 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
 
 
 @Composable
@@ -105,4 +107,15 @@ private fun OverlappingRow(
 
 private object QueueSizes {
     val maxWidth = 130.dp
+}
+
+@Preview
+@Composable
+private fun QueuePreview() {
+    ThmanyahTheme {
+        Queue(
+            imagesUrl = (1..5).map { "" },
+            title = "Queue",
+        )
+    }
 }

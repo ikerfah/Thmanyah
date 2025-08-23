@@ -32,6 +32,7 @@ data class ContentDto(
     @Json(name = "priority") val priority: Int?,
     @Json(name = "podcastPriority") val podcastPriority: Int?,
     @Json(name = "duration") val duration: Int,
+    @Json(name = "release_date") val releaseDate: String?,
 
     // Episode
     @Json(name = "episode_id") val episodeId: String? = null,
