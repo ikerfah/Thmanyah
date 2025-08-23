@@ -41,6 +41,7 @@ fun SectionDto.toDomain(): Section {
                 title = it.name,
                 imageUrl = it.avatarUrl,
                 priority = it.priority ?: it.podcastPriority ?: Int.MAX_VALUE,
+                durationInSeconds = it.duration
             )
         }
     )

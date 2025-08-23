@@ -1,6 +1,7 @@
 package com.ikerfah.thmanyah.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -23,6 +24,7 @@ import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
 fun GridItem(
     imageUrl: String?,
     title: String,
+    durationInSeconds: Int,
     modifier: Modifier = Modifier
 ) {
     Row(modifier = modifier.height(GridItemSizes.maxHeight)) {
@@ -45,12 +47,15 @@ fun GridItem(
             )
         }
 
-        CustomText(
-            text = title,
-            maxLines = 2,
-            modifier = Modifier.padding(8.dp),
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
+        Column {
+            TitleText(
+                text = title,
+                maxLines = 2,
+                modifier = Modifier.padding(8.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+            Duration(durationInSeconds)
+        }
     }
 }
 
@@ -60,7 +65,8 @@ private fun GridItemPreview() {
     ThmanyahTheme {
         GridItem(
             imageUrl = "https://media.npr.org/assets/img/2018/08/03/npr_tbl_podcasttile_sq-284e5618e2b2df0f3158b076d5bc44751e78e1b6.jpg?s=1400&c=66&f=jpg",
-            title = "The Very Big Listen "
+            title = "The Very Big Listen ",
+            durationInSeconds = 320
         )
     }
 }

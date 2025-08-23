@@ -53,7 +53,7 @@ fun Queue(
 
             Box(modifier = Modifier.weight(1f)) {
                 title?.let {
-                    CustomText(
+                    TitleText(
                         text = it,
                         maxLines = 2,
                         color = MaterialTheme.colorScheme.onPrimary,

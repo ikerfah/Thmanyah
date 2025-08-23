@@ -54,7 +54,7 @@ fun SquareBig(
                     .align(Alignment.BottomEnd)
 
             ) {
-                CustomText(
+                TitleText(
                     text = title,
                     modifier = Modifier.padding(8.dp),
                     color = MaterialTheme.colorScheme.primary,

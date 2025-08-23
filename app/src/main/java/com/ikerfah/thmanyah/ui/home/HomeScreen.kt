@@ -157,7 +157,8 @@ private fun SectionsList(
                             items(section.items) { sectionContent ->
                                 Square(
                                     imageUrl = sectionContent.imageUrl,
-                                    title = sectionContent.title
+                                    title = sectionContent.title,
+                                    durationInSeconds = sectionContent.durationInSeconds,
                                 )
                             }
                         }
@@ -194,6 +195,7 @@ private fun SectionsList(
                                 GridItem(
                                     imageUrl = sectionContent.imageUrl,
                                     title = sectionContent.title,
+                                    durationInSeconds = sectionContent.durationInSeconds,
                                     modifier = Modifier.width(itemWidth)
                                 )
                             }
@@ -303,12 +305,14 @@ private fun HomeContentSuccessPreview() {
                                 title = "Content 1",
                                 imageUrl = null,
                                 priority = 1,
+                                durationInSeconds = 300
                             ),
                             SectionContent(
                                 id = "id2",
                                 title = "Content 2",
                                 imageUrl = null,
                                 priority = 2,
+                                durationInSeconds = 500
                             )
                         )
                     ),
@@ -323,12 +327,14 @@ private fun HomeContentSuccessPreview() {
                                 title = "Content 1",
                                 imageUrl = null,
                                 priority = 1,
+                                durationInSeconds = 100
                             ),
                             SectionContent(
                                 id = "id2",
                                 title = "Content 2",
                                 imageUrl = null,
                                 priority = 2,
+                                durationInSeconds = 45
                             )
                         )
                     ),
@@ -343,12 +349,14 @@ private fun HomeContentSuccessPreview() {
                                 title = "Content 1",
                                 imageUrl = null,
                                 priority = 1,
+                                durationInSeconds = 500
                             ),
                             SectionContent(
                                 id = "id2",
                                 title = "Content 2",
                                 imageUrl = null,
                                 priority = 2,
+                                durationInSeconds = 200
                             )
                         )
                     )
