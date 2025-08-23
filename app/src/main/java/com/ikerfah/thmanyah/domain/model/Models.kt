@@ -12,6 +12,7 @@ data class SectionContent(
     val id: String,
     val title: String,
     val imageUrl: String?,
+    val priority: Int
 )
 
 enum class ContentType { Podcast, Episode, AudioBook, AudioArticle }

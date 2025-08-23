@@ -301,12 +301,14 @@ private fun HomeContentSuccessPreview() {
                             SectionContent(
                                 id = "id1",
                                 title = "Content 1",
-                                imageUrl = null
+                                imageUrl = null,
+                                priority = 1,
                             ),
                             SectionContent(
                                 id = "id2",
                                 title = "Content 2",
-                                imageUrl = null
+                                imageUrl = null,
+                                priority = 2,
                             )
                         )
                     ),
@@ -319,12 +321,14 @@ private fun HomeContentSuccessPreview() {
                             SectionContent(
                                 id = "id1",
                                 title = "Content 1",
-                                imageUrl = null
+                                imageUrl = null,
+                                priority = 1,
                             ),
                             SectionContent(
                                 id = "id2",
                                 title = "Content 2",
-                                imageUrl = null
+                                imageUrl = null,
+                                priority = 2,
                             )
                         )
                     ),
@@ -337,12 +341,14 @@ private fun HomeContentSuccessPreview() {
                             SectionContent(
                                 id = "id1",
                                 title = "Content 1",
-                                imageUrl = null
+                                imageUrl = null,
+                                priority = 1,
                             ),
                             SectionContent(
                                 id = "id2",
                                 title = "Content 2",
-                                imageUrl = null
+                                imageUrl = null,
+                                priority = 2,
                             )
                         )
                     )
