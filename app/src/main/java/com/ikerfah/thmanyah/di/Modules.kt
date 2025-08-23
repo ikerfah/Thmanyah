@@ -6,13 +6,15 @@ import com.ikerfah.thmanyah.data.remote.SearchService
 import com.ikerfah.thmanyah.data.repository.AppRepositoryImpl
 import com.ikerfah.thmanyah.domain.repository.AppRepository
 import com.ikerfah.thmanyah.domain.usecase.GetHomeSectionsUseCase
+import com.ikerfah.thmanyah.domain.usecase.SearchUseCase
 import com.ikerfah.thmanyah.ui.home.HomeViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val appModule = module {
-    single<AppRepository> { AppRepositoryImpl(get()) }
+    single<AppRepository> { AppRepositoryImpl(get(), get()) }
     factory { GetHomeSectionsUseCase(get()) }
+    factory { SearchUseCase(get()) }
     viewModel { HomeViewModel(get()) }
 }
 
