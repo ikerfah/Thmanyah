@@ -1,6 +1,8 @@
 package com.ikerfah.thmanyah.di
 
+import com.ikerfah.thmanyah.data.remote.ApiService
 import com.ikerfah.thmanyah.data.remote.NetworkClient
+import com.ikerfah.thmanyah.data.remote.SearchService
 import com.ikerfah.thmanyah.data.repository.AppRepositoryImpl
 import com.ikerfah.thmanyah.domain.repository.AppRepository
 import com.ikerfah.thmanyah.domain.usecase.GetHomeSectionsUseCase
@@ -17,7 +19,15 @@ val appModule = module {
 val networkModule = module {
     single {
         NetworkClient.create(
-            baseUrlHome = "https://api-v2-b2sit6oh3a-uc.a.run.app/"
+            baseUrl = "https://api-v2-b2sit6oh3a-uc.a.run.app/",
+            service = ApiService::class.java
+        )
+    }
+
+    single {
+        NetworkClient.create(
+            baseUrl = "https://mock.apidog.com/m1/735111-711675-default/",
+            service = SearchService::class.java
         )
     }
 }

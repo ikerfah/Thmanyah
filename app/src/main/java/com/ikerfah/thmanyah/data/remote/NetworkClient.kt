@@ -7,18 +7,19 @@ import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
 object NetworkClient {
-    fun create(baseUrlHome: String): ApiService {
+    fun <T> create(baseUrl: String, service: Class<T>): T {
         val logging = HttpLoggingInterceptor().apply {
             level =
                 HttpLoggingInterceptor.Level.BODY
         }
         val client = OkHttpClient.Builder().addInterceptor(logging).build()
         val moshi = Moshi.Builder().build()
-        val retrofitHome = Retrofit.Builder()
-            .baseUrl(baseUrlHome)
+        val retrofit = Retrofit.Builder()
+            .baseUrl(baseUrl)
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
-        return retrofitHome.create(ApiService::class.java)
+
+        return retrofit.create(service)
     }
 }
