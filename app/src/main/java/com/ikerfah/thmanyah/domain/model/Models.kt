@@ -2,6 +2,16 @@ package com.ikerfah.thmanyah.domain.model
 
 import java.time.LocalDateTime
 
+data class HomeSection(
+    val sections: List<Section>,
+    val pagination: Pagination?
+)
+
+data class Pagination(
+    val nextPage: String?,
+    val totalPages: Int?
+)
+
 data class Section(
     val name: String,
     val contentType: ContentType,

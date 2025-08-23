@@ -1,6 +1,7 @@
 package com.ikerfah.thmanyah
 
 import com.ikerfah.thmanyah.domain.model.ContentType
+import com.ikerfah.thmanyah.domain.model.HomeSection
 import com.ikerfah.thmanyah.domain.model.Section
 import com.ikerfah.thmanyah.domain.model.SectionContent
 import com.ikerfah.thmanyah.domain.model.SectionType
@@ -44,11 +45,12 @@ class GetHomeSectionsUseCaseTest {
             )
         )
 
-        whenever(repository.getHomeSections(page = null)).thenReturn(unsortedSections)
+        whenever(repository.getHomeSections(page = null))
+            .thenReturn(HomeSection(unsortedSections,null))
 
         val result = getHomeSectionsUseCase()
 
-        assertEquals(listOf(unsortedSections[1], unsortedSections[0]), result)
+        assertEquals(listOf(unsortedSections[1], unsortedSections[0]), result.sections)
         verify(repository).getHomeSections(page = null)
     }
 
@@ -68,20 +70,21 @@ class GetHomeSectionsUseCaseTest {
             items = items
         )
 
-        whenever(repository.getHomeSections(page = 1)).thenReturn(listOf(section))
+        whenever(repository.getHomeSections(page = 1)).thenReturn(
+            HomeSection(listOf(section), null))
 
         val result = getHomeSectionsUseCase(page = 1)
 
-        val sortedItems = result.first().items
+        val sortedItems = result.sections.first().items
         assertEquals(listOf(1, 2, 3), sortedItems.map { it.priority })
     }
 
     @Test
     fun `invoke should handle empty list`() = runTest {
-        whenever(repository.getHomeSections(page = null)).thenReturn(emptyList())
+        whenever(repository.getHomeSections(page = null)).thenReturn(HomeSection(emptyList(), null))
 
         val result = getHomeSectionsUseCase()
 
-        assertEquals(emptyList<Section>(), result)
+        assertEquals(emptyList<Section>(), result.sections)
     }
 }

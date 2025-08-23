@@ -1,8 +1,12 @@
 package com.ikerfah.thmanyah.data.mapper
 
+import com.ikerfah.thmanyah.data.remote.dto.HomeSectionDto
+import com.ikerfah.thmanyah.data.remote.dto.PaginationDto
 import com.ikerfah.thmanyah.data.remote.dto.SearchSectionDto
 import com.ikerfah.thmanyah.data.remote.dto.SectionDto
 import com.ikerfah.thmanyah.domain.model.ContentType
+import com.ikerfah.thmanyah.domain.model.HomeSection
+import com.ikerfah.thmanyah.domain.model.Pagination
 import com.ikerfah.thmanyah.domain.model.Section
 import com.ikerfah.thmanyah.domain.model.SectionContent
 import com.ikerfah.thmanyah.domain.model.SectionType
@@ -69,6 +73,20 @@ fun SearchSectionDto.toDomain(): Section {
                 durationInSeconds = it.duration?.toIntOrNull(),
             )
         }
+    )
+}
+
+fun HomeSectionDto.toDomain(): HomeSection {
+    return HomeSection(
+        sections = sections.map(SectionDto::toDomain),
+        pagination = pagination?.toDomain()
+    )
+}
+
+fun PaginationDto.toDomain(): Pagination {
+    return Pagination(
+        nextPage = nextPage,
+        totalPages = totalPages
     )
 }
 

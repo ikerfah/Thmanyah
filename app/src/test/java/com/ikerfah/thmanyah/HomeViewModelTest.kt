@@ -2,6 +2,7 @@ package com.ikerfah.thmanyah
 
 import app.cash.turbine.test
 import com.ikerfah.thmanyah.domain.model.ContentType
+import com.ikerfah.thmanyah.domain.model.HomeSection
 import com.ikerfah.thmanyah.domain.model.Section
 import com.ikerfah.thmanyah.domain.model.SectionType
 import com.ikerfah.thmanyah.domain.usecase.GetHomeSectionsUseCase
@@ -53,7 +54,7 @@ class HomeViewModelTest {
                 items = listOf()
             ),
         )
-        whenever(getHomeSectionsUseCase.invoke(page = 1)).thenReturn(fakeSections)
+        whenever(getHomeSectionsUseCase.invoke(page = 1)).thenReturn(HomeSection(fakeSections, null))
 
         viewModel.state.test {
             viewModel.performAction(AppIntent.LoadData)
@@ -127,7 +128,7 @@ class HomeViewModelTest {
                 items = listOf()
             ),
         )
-        whenever(getHomeSectionsUseCase.invoke(page = 1)).thenReturn(fakeSections)
+        whenever(getHomeSectionsUseCase.invoke(page = 1)).thenReturn(HomeSection(fakeSections, null))
 
         viewModel.state.test {
             viewModel.performAction(AppIntent.LoadData)
