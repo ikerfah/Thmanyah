@@ -3,6 +3,7 @@ package com.ikerfah.thmanyah.ui.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,7 +29,7 @@ fun Square(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Duration(durationInSeconds)
+            Duration(durationInSeconds, modifier = Modifier.padding(start = 8.dp))
             releaseDate?.let {
                 Date(it)
             }

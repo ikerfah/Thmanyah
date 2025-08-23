@@ -62,7 +62,7 @@ fun GridItem(
                 modifier = Modifier.padding(8.dp),
                 color = MaterialTheme.colorScheme.onPrimary,
             )
-            Duration(durationInSeconds)
+            Duration(durationInSeconds, modifier = Modifier.padding(start = 16.dp))
         }
     }
 }
