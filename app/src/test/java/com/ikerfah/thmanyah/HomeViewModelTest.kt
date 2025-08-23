@@ -72,4 +72,92 @@ class HomeViewModelTest {
             cancelAndConsumeRemainingEvents()
         }
     }
+
+
+    @Test
+    fun `performAction LoadData handles exception`() = testScope.runTest {
+        val error = RuntimeException("Network error")
+        whenever(getHomeSectionsUseCase.invoke(page = 1)).thenThrow(error)
+
+        viewModel.state.test {
+            viewModel.performAction(AppIntent.LoadData)
+
+            // skip initial
+            awaitItem()
+            // loading
+            awaitItem()
+            // error state
+            val errorState = awaitItem()
+            assertEquals(error, errorState.throwable)
+            assertFalse(errorState.isLoading)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `performAction SelectContentType filters sections`() = testScope.runTest {
+        val fakeSections = listOf(
+            Section(
+                name = "id1",
+                contentType = ContentType.Podcast,
+                type = SectionType.Square,
+                order = 1,
+                items = listOf()
+            ),
+            Section(
+                name = "id2",
+                contentType = ContentType.AudioBook,
+                type = SectionType.Square,
+                order = 2,
+                items = listOf()
+            ),
+            Section(
+                name = "id3",
+                contentType = ContentType.Episode,
+                type = SectionType.Square,
+                order = 3,
+                items = listOf()
+            ),
+            Section(
+                name = "id4",
+                contentType = ContentType.Podcast,
+                type = SectionType.Square,
+                order = 4,
+                items = listOf()
+            ),
+        )
+        whenever(getHomeSectionsUseCase.invoke(page = 1)).thenReturn(fakeSections)
+
+        viewModel.state.test {
+            viewModel.performAction(AppIntent.LoadData)
+            // skip initial
+            awaitItem()
+            // Skip loading
+            awaitItem()
+
+            assertNull(awaitItem().selectedContentType)
+            viewModel.performAction(AppIntent.SelectContentType(ContentType.Podcast))
+
+            var updated = awaitItem()
+            assertEquals(ContentType.Podcast, updated.selectedContentType)
+            assertEquals(2, updated.sections.size)
+            assertTrue(updated.sections.all { it.contentType == ContentType.Podcast })
+
+            // Switch to another content type
+            viewModel.performAction(AppIntent.SelectContentType(ContentType.Episode))
+            updated = awaitItem()
+            assertEquals(ContentType.Episode, updated.selectedContentType)
+            assertEquals(1, updated.sections.size)
+            assertTrue(updated.sections.all { it.contentType == ContentType.Episode })
+
+            // Select the some content type unselect the selection
+            viewModel.performAction(AppIntent.SelectContentType(ContentType.Episode))
+            updated = awaitItem()
+            assertNull(updated.selectedContentType)
+            assertEquals(4, updated.sections.size)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
 }
