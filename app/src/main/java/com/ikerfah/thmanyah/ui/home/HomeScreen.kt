@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -20,6 +21,9 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -39,9 +43,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ikerfah.thmanyah.R
 import com.ikerfah.thmanyah.domain.model.ContentType
 import com.ikerfah.thmanyah.domain.model.Section
 import com.ikerfah.thmanyah.domain.model.SectionContent
@@ -52,6 +58,7 @@ import com.ikerfah.thmanyah.ui.components.Queue
 import com.ikerfah.thmanyah.ui.components.Square
 import com.ikerfah.thmanyah.ui.components.SquareBig
 import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
+import com.ikerfah.thmanyah.ui.theme.appBarText
 import com.ikerfah.thmanyah.ui.theme.highlightedBackground
 import com.ikerfah.thmanyah.ui.theme.sectionHeader
 import org.koin.androidx.compose.koinViewModel
@@ -82,12 +89,7 @@ private fun HomeContent(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Thmanyah") },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
-            )
-        },
+        topBar = { TopAppBar() },
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.primary
     ) { padding ->
@@ -286,6 +288,48 @@ private fun CategoryItem(
             }
         ),
         modifier = modifier
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopAppBar(modifier: Modifier = Modifier) {
+    TopAppBar(
+        modifier = modifier,
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.profile_circle),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(48.dp)
+                )
+                Text(
+                    text = "Good afternoon, Abdurahman",
+                    style = MaterialTheme.typography.appBarText
+
+                )
+            }
+        },
+        actions = {
+            BadgedBox(
+                badge = {
+                    Badge {
+                        Text("4")
+                    }
+                },
+                modifier = Modifier.padding(horizontal = 8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Notifications,
+                    contentDescription = "Notifications"
+                )
+            }
+        },
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primary)
     )
 }
 
