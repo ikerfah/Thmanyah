@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.ikerfah.thmanyah.ui.home
 
 import android.content.res.Configuration
@@ -30,6 +32,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -76,8 +79,12 @@ fun HomeScreen(
         searchQuery = searchState,
         onSearchQueryChange = searchViewModel::onQueryChange,
         searchResults = searchResults,
+        isRefreshing = state.isRefreshing,
         loadMoreItems = {
             homeViewModel.performAction(AppIntent.LoadMoreItems)
+        },
+        onRefresh = {
+            homeViewModel.performAction(AppIntent.Refresh)
         }
     )
 }
@@ -91,6 +98,8 @@ private fun HomeContent(
     onSearchQueryChange: (String) -> Unit,
     searchResults: List<Section>,
     loadMoreItems: () -> Unit,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -124,6 +133,8 @@ private fun HomeContent(
                 selectedContentType = state.selectedContentType,
                 onSelectedContentTypeChange = onSelectedContentTypeChange,
                 loadMoreItems = loadMoreItems,
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
                 modifier = Modifier.padding(padding)
             )
         }
@@ -137,103 +148,110 @@ internal fun SectionsList(
     selectedContentType: ContentType?,
     onSelectedContentTypeChange: (ContentType) -> Unit,
     loadMoreItems: () -> Unit,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val screenWidth =
         with(LocalDensity.current) { LocalWindowInfo.current.containerSize.width.toDp() }
     val itemWidth = screenWidth * 0.7f
-    LazyColumn(modifier.fillMaxSize()) {
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp)
-            ) {
-                items(contentTypes) { contentType ->
-                    CategoryItem(
-                        name = contentType.name,
-                        isSelected = selectedContentType == contentType,
-                        onClick = {
-                            onSelectedContentTypeChange(contentType)
-                        }
-                    )
-                }
-            }
-        }
-        items(sections) { section ->
-            Column(modifier = Modifier.fillMaxWidth()) {
-                SectionHeader(name = section.name)
-                when (section.type) {
-                    SectionType.Square -> {
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            contentPadding = PaddingValues(horizontal = 16.dp)
-                        ) {
-                            items(section.items) { sectionContent ->
-                                Square(
-                                    imageUrl = sectionContent.imageUrl,
-                                    title = sectionContent.title,
-                                    durationInSeconds = sectionContent.durationInSeconds,
-                                    releaseDate = sectionContent.releaseDate,
-                                )
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+    ) {
+        LazyColumn(modifier.fillMaxSize()) {
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp)
+                ) {
+                    items(contentTypes) { contentType ->
+                        CategoryItem(
+                            name = contentType.name,
+                            isSelected = selectedContentType == contentType,
+                            onClick = {
+                                onSelectedContentTypeChange(contentType)
                             }
-                        }
-                    }
-
-                    SectionType.BigSquare ->
-                        LazyRow(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            contentPadding = PaddingValues(horizontal = 16.dp)
-                        ) {
-                            items(section.items) { sectionContent ->
-                                SquareBig(
-                                    imageUrl = sectionContent.imageUrl,
-                                    title = sectionContent.title
-                                )
-                            }
-                        }
-
-                    SectionType.TwoLinesGrid -> {
-                        LazyHorizontalGrid(
-                            rows = GridCells.Fixed(2),
-                            horizontalArrangement = Arrangement.spacedBy(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            contentPadding = PaddingValues(horizontal = 16.dp),
-                            // LazyHorizontalGrid's height should be bound by parent.
-                            // We have two rows, each has max height of GridItemSizes.maxHeight
-                            // Total height will be the sum height of the two + some paddings
-                            modifier = Modifier.heightIn(max = GridItemSizes.maxHeight.times(2))
-                        ) {
-                            items(section.items) { sectionContent ->
-                                GridItem(
-                                    imageUrl = sectionContent.imageUrl,
-                                    title = sectionContent.title,
-                                    durationInSeconds = sectionContent.durationInSeconds,
-                                    releaseDate = sectionContent.releaseDate,
-                                    modifier = Modifier.width(itemWidth)
-                                )
-                            }
-                        }
-                    }
-
-                    SectionType.Queue -> {
-
-                        val itemsToShow = if (section.items.isNotEmpty()) {
-                            // We only show the first 4 items of the queue
-                            section.items.take(4)
-                        } else {
-                            emptyList()
-                        }
-                        Queue(
-                            imagesUrl = itemsToShow.map { it.imageUrl },
-                            title = itemsToShow.lastOrNull()?.title
                         )
                     }
                 }
             }
-        }
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-            loadMoreItems()
+            items(sections) { section ->
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    SectionHeader(name = section.name)
+                    when (section.type) {
+                        SectionType.Square -> {
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp)
+                            ) {
+                                items(section.items) { sectionContent ->
+                                    Square(
+                                        imageUrl = sectionContent.imageUrl,
+                                        title = sectionContent.title,
+                                        durationInSeconds = sectionContent.durationInSeconds,
+                                        releaseDate = sectionContent.releaseDate,
+                                    )
+                                }
+                            }
+                        }
+
+                        SectionType.BigSquare ->
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp)
+                            ) {
+                                items(section.items) { sectionContent ->
+                                    SquareBig(
+                                        imageUrl = sectionContent.imageUrl,
+                                        title = sectionContent.title
+                                    )
+                                }
+                            }
+
+                        SectionType.TwoLinesGrid -> {
+                            LazyHorizontalGrid(
+                                rows = GridCells.Fixed(2),
+                                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                contentPadding = PaddingValues(horizontal = 16.dp),
+                                // LazyHorizontalGrid's height should be bound by parent.
+                                // We have two rows, each has max height of GridItemSizes.maxHeight
+                                // Total height will be the sum height of the two + some paddings
+                                modifier = Modifier.heightIn(max = GridItemSizes.maxHeight.times(2))
+                            ) {
+                                items(section.items) { sectionContent ->
+                                    GridItem(
+                                        imageUrl = sectionContent.imageUrl,
+                                        title = sectionContent.title,
+                                        durationInSeconds = sectionContent.durationInSeconds,
+                                        releaseDate = sectionContent.releaseDate,
+                                        modifier = Modifier.width(itemWidth)
+                                    )
+                                }
+                            }
+                        }
+
+                        SectionType.Queue -> {
+
+                            val itemsToShow = if (section.items.isNotEmpty()) {
+                                // We only show the first 4 items of the queue
+                                section.items.take(4)
+                            } else {
+                                emptyList()
+                            }
+                            Queue(
+                                imagesUrl = itemsToShow.map { it.imageUrl },
+                                title = itemsToShow.lastOrNull()?.title
+                            )
+                        }
+                    }
+                }
+            }
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+                loadMoreItems()
+            }
         }
     }
 }
@@ -379,8 +397,10 @@ private fun HomeContentSuccessPreview() {
             ),
             onSelectedContentTypeChange = {},
             searchQuery = "",
+            isRefreshing = false,
             onSearchQueryChange = {},
             loadMoreItems = {},
+            onRefresh = {},
             searchResults = listOf(),
         )
     }

@@ -22,22 +22,24 @@ class HomeViewModel(
     private val _state = MutableStateFlow(HomeUiState())
     val state: StateFlow<HomeUiState> = _state.asStateFlow()
 
-    private fun refresh() {
+    private fun loadInitialData(isRefreshing: Boolean) {
         viewModelScope.launch {
-            _state.update { it.copy(isLoading = true) }
+            _state.update { it.copy(isLoading = true, isRefreshing = isRefreshing) }
             try {
                 val response = getHomeSectionsUseCase(page = 1)
                 nextPage = response.pagination?.nextPage
-                _state.update { it.copy(_sections = response.sections, isLoading = false) }
+                _state.update { it.copy(_sections = response.sections, isLoading = false, isRefreshing = false) }
             } catch (e: Exception) {
-                _state.update { it.copy(throwable = e, isLoading = false) }
+                _state.update { it.copy(throwable = e, isLoading = false, isRefreshing = false) }
             }
         }
     }
 
     fun performAction(intent: AppIntent) {
         when (intent) {
-            AppIntent.LoadData -> refresh()
+            AppIntent.LoadData -> loadInitialData(isRefreshing = false)
+            AppIntent.Refresh -> loadInitialData(isRefreshing = true)
+
             is AppIntent.SelectContentType -> _state.update { homeUiState ->
                 homeUiState.copy(
                     // deselect if the same is tapped again
@@ -55,7 +57,8 @@ class HomeViewModel(
 
                     _state.update { it.copy(_sections = it._sections + response.sections) }
                     val newNextPage = response.pagination?.nextPage
-                    nextPage = if (newNextPage != nextPage) newNextPage else null // There is a problem with the api, when you request page 2, the pagination next page is 2 instead of 3
+                    nextPage =
+                        if (newNextPage != nextPage) newNextPage else null // There is a problem with the api, when you request page 2, the pagination next page is 2 instead of 3
                     isLoading = false
                 }
             }
@@ -65,6 +68,7 @@ class HomeViewModel(
 
 data class HomeUiState(
     val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
     val throwable: Throwable? = null,
     val selectedContentType: ContentType? = null,
     internal val _sections: List<Section> = emptyList(),
@@ -76,6 +80,7 @@ data class HomeUiState(
 
 sealed interface AppIntent {
     data object LoadData : AppIntent
-    data class SelectContentType(val contentType: ContentType): AppIntent
-    data object LoadMoreItems: AppIntent
+    data object Refresh : AppIntent
+    data class SelectContentType(val contentType: ContentType) : AppIntent
+    data object LoadMoreItems : AppIntent
 }

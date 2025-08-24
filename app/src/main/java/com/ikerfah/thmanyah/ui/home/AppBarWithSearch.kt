@@ -120,6 +120,8 @@ fun CustomizableSearchBar(
                 selectedContentType = null,
                 onSelectedContentTypeChange = {},
                 loadMoreItems = {},
+                isRefreshing = false,
+                onRefresh = {}
             )
         }
     }
