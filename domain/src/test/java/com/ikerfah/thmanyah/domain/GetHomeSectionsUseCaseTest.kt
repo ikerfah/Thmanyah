@@ -1,4 +1,4 @@
-package com.ikerfah.thmanyah
+package com.ikerfah.thmanyah.domain
 
 import com.ikerfah.thmanyah.domain.model.ContentType
 import com.ikerfah.thmanyah.domain.model.HomeSection

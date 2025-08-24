@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalCoroutinesApi::class)
 
-package com.ikerfah.thmanyah
+package com.ikerfah.thmanyah.domain
 
 import app.cash.turbine.test
 import com.ikerfah.thmanyah.domain.model.ContentType
