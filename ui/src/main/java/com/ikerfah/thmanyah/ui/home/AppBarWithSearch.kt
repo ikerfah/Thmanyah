@@ -33,8 +33,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.ikerfah.thmanyah.R
 import com.ikerfah.thmanyah.domain.model.Section
+import com.ikerfah.thmanyah.ui.R
 import com.ikerfah.thmanyah.ui.theme.appBarText
 
 @Composable

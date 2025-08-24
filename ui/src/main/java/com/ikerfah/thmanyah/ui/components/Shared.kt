@@ -28,7 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.ikerfah.thmanyah.R
+import com.ikerfah.thmanyah.ui.R
 import com.ikerfah.thmanyah.ui.formatRelativeDateTime
 import com.ikerfah.thmanyah.ui.formatSecondsToHoursAndMinutes
 import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme

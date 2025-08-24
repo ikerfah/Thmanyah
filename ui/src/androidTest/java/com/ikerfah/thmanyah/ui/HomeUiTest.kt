@@ -1,4 +1,4 @@
-package com.ikerfah.thmanyah
+package com.ikerfah.thmanyah.ui
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
@@ -15,7 +15,7 @@ import com.ikerfah.thmanyah.domain.model.SectionContent
 import com.ikerfah.thmanyah.domain.model.SectionType
 import com.ikerfah.thmanyah.ui.home.HomeContent
 import com.ikerfah.thmanyah.ui.home.HomeUiState
-import org.junit.Assert.assertTrue
+import org.junit.Assert
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -168,6 +168,6 @@ class HomeUiTest {
         composeTestRule.onNodeWithTag("SectionsList")
             .performScrollToIndex(sections.lastIndex)
 
-        assertTrue(loadMoreCalled)
+        Assert.assertTrue(loadMoreCalled)
     }
 }
