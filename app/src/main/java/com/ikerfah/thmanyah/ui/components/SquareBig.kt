@@ -1,5 +1,6 @@
 package com.ikerfah.thmanyah.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -57,14 +58,15 @@ fun SquareBig(
                 TitleText(
                     text = title,
                     modifier = Modifier.padding(8.dp),
-                    color = MaterialTheme.colorScheme.primary,
+                    color = Color.White,
                 )
             }
         }
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Composable
 private fun SquareBigPreview() {
     ThmanyahTheme {
