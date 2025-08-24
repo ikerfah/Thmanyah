@@ -63,9 +63,7 @@ class HomeViewModel(
                     val response = getHomeSectionsUseCase(page = pageNumber)
 
                     _state.update { it.copy(_sections = it._sections + response.sections) }
-                    val newNextPage = response.pagination?.nextPage
-                    nextPage =
-                        if (newNextPage != nextPage) newNextPage else null // There is a problem with the api, when you request page 2, the pagination next page is 2 instead of 3
+                    nextPage = response.pagination?.nextPage
                     isLoading = false
                 }
             }
