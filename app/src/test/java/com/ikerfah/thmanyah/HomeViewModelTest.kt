@@ -161,4 +161,43 @@ class HomeViewModelTest {
             cancelAndConsumeRemainingEvents()
         }
     }
+
+    @Test
+    fun `performAction Refresh should reset error`() = testScope.runTest {
+        val error = RuntimeException("Network error")
+        val fakeSections = listOf(
+            Section(
+                name = "id1",
+                contentType = ContentType.Podcast,
+                type = SectionType.Square,
+                order = 1,
+                items = listOf()
+            ),
+        )
+        whenever(getHomeSectionsUseCase.invoke(page = 1))
+            .thenThrow(error)
+            .thenReturn(HomeSection(fakeSections, null))
+
+        viewModel.state.test {
+            viewModel.performAction(AppIntent.LoadData)
+
+            // skip initial
+            awaitItem()
+            // loading
+            awaitItem()
+            // error state
+            val errorState = awaitItem()
+            assertEquals(error, errorState.throwable)
+            assertFalse(errorState.isLoading)
+
+            viewModel.performAction(AppIntent.Refresh)
+            // skip initial
+            awaitItem()
+
+            val newState = awaitItem()
+            assertNull(newState.throwable)
+
+            cancelAndConsumeRemainingEvents()
+        }
+    }
 }

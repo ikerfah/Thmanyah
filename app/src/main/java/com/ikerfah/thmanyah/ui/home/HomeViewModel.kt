@@ -28,7 +28,14 @@ class HomeViewModel(
             try {
                 val response = getHomeSectionsUseCase(page = 1)
                 nextPage = response.pagination?.nextPage
-                _state.update { it.copy(_sections = response.sections, isLoading = false, isRefreshing = false) }
+                _state.update {
+                    it.copy(
+                        _sections = response.sections,
+                        isLoading = false,
+                        isRefreshing = false,
+                        throwable = null
+                    )
+                }
             } catch (e: Exception) {
                 _state.update { it.copy(throwable = e, isLoading = false, isRefreshing = false) }
             }
