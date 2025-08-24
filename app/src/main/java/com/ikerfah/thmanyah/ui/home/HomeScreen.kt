@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -93,7 +94,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun HomeContent(
+internal fun HomeContent(
     state: HomeUiState,
     onSelectedContentTypeChange: (ContentType) -> Unit,
     searchQuery: String,
@@ -119,7 +120,8 @@ private fun HomeContent(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .padding(padding),
+                    .padding(padding)
+                    .testTag("homeContentLoading"),
                 contentAlignment = Alignment.Center
             ) { CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary) }
         } else if (state.throwable != null) {
@@ -130,7 +132,7 @@ private fun HomeContent(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Error loading data")
+                Text("Error loading data", modifier = Modifier.testTag("ErrorText"))
                 Button(
                     onClick = onRefresh,
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface)
@@ -171,7 +173,7 @@ internal fun SectionsList(
         isRefreshing = isRefreshing,
         onRefresh = onRefresh,
     ) {
-        LazyColumn(modifier.fillMaxSize()) {
+        LazyColumn(modifier.fillMaxSize().testTag("SectionsList")) {
             item {
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
