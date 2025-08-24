@@ -23,6 +23,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -121,11 +123,21 @@ private fun HomeContent(
                 contentAlignment = Alignment.Center
             ) { CircularProgressIndicator(color = MaterialTheme.colorScheme.onPrimary) }
         } else if (state.throwable != null) {
-            Box(
+            Column(
                 Modifier
                     .fillMaxSize()
-                    .padding(padding)
-            ) { Text("Error: ${state.throwable.message}") }
+                    .padding(padding),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text("Error loading data")
+                Button(
+                    onClick = onRefresh,
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.surface)
+                ) {
+                    Text(text = "Retry")
+                }
+            }
         } else {
             SectionsList(
                 sections = state.sections,
