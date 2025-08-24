@@ -57,6 +57,7 @@ fun AppBarWithSearch(
                 searchResults = searchResults,
                 onCloseSearch = {
                     isSearch = false
+                    onQueryChange("")
                 }
             )
         } else {
