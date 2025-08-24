@@ -56,6 +56,7 @@ import com.ikerfah.thmanyah.ui.components.GridItemSizes
 import com.ikerfah.thmanyah.ui.components.Queue
 import com.ikerfah.thmanyah.ui.components.Square
 import com.ikerfah.thmanyah.ui.components.SquareBig
+import com.ikerfah.thmanyah.ui.search.SearchViewModel
 import com.ikerfah.thmanyah.ui.theme.ThmanyahTheme
 import com.ikerfah.thmanyah.ui.theme.highlightedBackground
 import com.ikerfah.thmanyah.ui.theme.sectionHeader

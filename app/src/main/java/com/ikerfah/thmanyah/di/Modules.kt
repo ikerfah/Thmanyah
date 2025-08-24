@@ -8,7 +8,7 @@ import com.ikerfah.thmanyah.domain.repository.AppRepository
 import com.ikerfah.thmanyah.domain.usecase.GetHomeSectionsUseCase
 import com.ikerfah.thmanyah.domain.usecase.SearchUseCase
 import com.ikerfah.thmanyah.ui.home.HomeViewModel
-import com.ikerfah.thmanyah.ui.home.SearchViewModel
+import com.ikerfah.thmanyah.ui.search.SearchViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 

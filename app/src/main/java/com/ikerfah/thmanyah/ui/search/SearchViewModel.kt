@@ -1,6 +1,4 @@
-@file:OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-
-package com.ikerfah.thmanyah.ui.home
+package com.ikerfah.thmanyah.ui.search
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshotFlow
@@ -8,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ikerfah.thmanyah.domain.model.Section
 import com.ikerfah.thmanyah.domain.usecase.SearchUseCase
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
