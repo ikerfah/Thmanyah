@@ -3,6 +3,8 @@ package com.ikerfah.thmanyah.ui
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
+// This can be improved by moving the strings to strings.xml for localization
+// Keeping it here just for the sack of the MVP/coding test
 fun formatSecondsToHoursAndMinutes(totalSeconds: Int): String {
     val hours = totalSeconds / 3600
     val minutes = (totalSeconds % 3600) / 60
